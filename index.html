@@ -103,24 +103,11 @@
             background: #16a34a;
         }
         .hidden { display: none; }
-        .note {
-            margin-top: 25px;
-            font-size: 14px;
-            color: #6b7280;
-            background: #f3f4f6;
-            padding: 12px;
-            border-radius: 8px;
-        }
-        .note code {
-            background: #e5e7eb;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>📚 Доступ к секретным статьям</h1>
+    <h1>📚 Доступ к статьям</h1>
     <p>Ответьте на вопросы ниже, чтобы разблокировать все статьи.</p>
 
     <div class="quiz-area">
@@ -132,12 +119,6 @@
     <div class="articles-list">
         <h2>📄 Статьи</h2>
         <div id="articlesContainer"></div>
-    </div>
-
-    <div class="note">
-        💡 <strong>Как добавить новый вопрос:</strong> откройте этот файл в блокноте, найдите массив <code>questions</code> и добавьте новый объект <code>{ id: "q4", text: "Текст вопроса", answer: "правильный ответ" }</code>. <br>
-        💡 <strong>Как добавить новую статью:</strong> найдите массив <code>articles</code> и добавьте <code>{ title: "Название", url: "https://ссылка" }</code>.<br>
-        ✅ <strong>Регистр ответов не важен</strong> – можно писать с большой или маленькой буквы.
     </div>
 </div>
 
@@ -214,7 +195,7 @@
         let allCorrect = true;
         for (let q of questions) {
             const userAnswer = document.getElementById(q.id).value.trim().toLowerCase();
-            const correct = q.answer.toLowerCase(); // на всякий случай, если кто-то написал с заглавной
+            const correct = q.answer.toLowerCase();
             if (userAnswer !== correct) {
                 allCorrect = false;
                 break;
