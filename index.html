@@ -3,74 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Викторина</title>
+    <title>Библиотека статей</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; background: #f9f9f9; }
-        .question { margin-bottom: 20px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 10px 30px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 { margin-top: 0; color: #1a1a2e; }
+        .quiz-area {
+            background: #eef2ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .question-item {
+            margin-bottom: 15px;
+        }
+        .question-item label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .question-item input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button:hover { background: #4338ca; }
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .articles-list {
+            margin-top: 30px;
+            border-top: 2px solid #e5e7eb;
+            padding-top: 20px;
+        }
+        .article-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border-left: 4px solid #9ca3af;
+        }
+        .article-item.unlocked {
+            border-left-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .article-title {
+            font-size: 17px;
+            font-weight: 500;
+        }
+        .lock-icon {
+            font-size: 24px;
+            margin-left: 10px;
+        }
+        .article-link {
+            color: #1e293b;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 6px;
+            background: #e2e8f0;
+        }
+        .article-link:hover {
+            background: #cbd5e1;
+        }
+        .unlocked .article-link {
+            background: #22c55e;
+            color: white;
+        }
+        .unlocked .article-link:hover {
+            background: #16a34a;
+        }
         .hidden { display: none; }
+        .note {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .note code {
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
-    <h1>📝 Для доступа к статье ответьте на вопросы</h1>
-    <div id="quiz">
-        <div class="question">
-            <p><strong>1.</strong> Как имя автора?</p>
-            <input type="text" id="q1" placeholder="Ваш ответ">
-        </div>
-        <div class="question">
-            <p><strong>2.</strong> Что такое поза лотоса (Телесная поза или Сотояние ума)?</p>
-            <input type="text" id="q2" placeholder="Ваш ответ">
-        </div>
-        <div class="question">
-            <p><strong>3.</strong> Кодовое слово?</p>
-            <input type="text" id="q3" placeholder="Ваш ответ">
-        </div>
-        <button onclick="checkAnswers()">Проверить</button>
+<div class="container">
+    <h1>📚 Доступ к статьям</h1>
+    <p>Ответьте на вопросы ниже, чтобы разблокировать все статьи.</p>
+
+    <div class="quiz-area">
+        <div id="questionsContainer"></div>
+        <button onclick="checkAnswers()">🔓 Разблокировать</button>
         <div id="result" class="result"></div>
     </div>
 
-    <script>
-        // ⚠️ ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ СЕКРЕТНУЮ СТРАНИЦУ
-        const SECRET_URL = "https://telegra.ph/Lyudi-batarejki-Arhonty-i-Iisusova-molitva-kak-sobrat-kartu-mira-iz-tripov-gnosticizma-pravoslaviya-i-Tibetskoj-knigi-Myortvyh-07-31";
+    <div class="articles-list">
+        <h2>📄 Статьи</h2>
+        <div id="articlesContainer"></div>
+    </div>
 
-        // Правильные ответы (всё приводится к нижнему регистру)
-        const correctAnswers = {
-            q1: "Роман",
-            q2: "Состояние ума",
-            q3: "Брахма"
-        };
+    <div class="note">
+        💡 <strong>Как добавить новый вопрос:</strong> откройте этот файл в блокноте, найдите массив <code>questions</code> и добавьте новый объект <code>{ id: "q4", text: "Текст вопроса", answer: "правильный ответ" }</code>. <br>
+        💡 <strong>Как добавить новую статью:</strong> найдите массив <code>articles</code> и добавьте <code>{ title: "Название", url: "https://ссылка" }</code>.<br>
+        ✅ <strong>Регистр ответов не важен</strong> – можно писать с большой или маленькой буквы.
+    </div>
+</div>
 
-        function checkAnswers() {
-            const userAnswers = {
-                q1: document.getElementById('q1').value.trim().toLowerCase(),
-                q2: document.getElementById('q2').value.trim().toLowerCase(),
-                q3: document.getElementById('q3').value.trim().toLowerCase()
-            };
+<script>
+    // ============================================================
+    //  НАСТРОЙКИ (меняйте здесь всё, что нужно)
+    // ============================================================
 
-            let allCorrect = true;
-            for (let key in correctAnswers) {
-                if (userAnswers[key] !== correctAnswers[key]) {
-                    allCorrect = false;
-                    break;
+    // 1. Вопросы и правильные ответы (все ответы пишите в нижнем регистре)
+    const questions = [
+        { id: "q1", text: "Как имя автора?", answer: "роман" },
+        { id: "q2", text: "Что такое поза лотоса (телесная поза или состояние ума)?", answer: "состояние ума" },
+        { id: "q3", text: "Кодовое слово?", answer: "брахма" }
+        // Добавьте новые вопросы сюда, например:
+        // { id: "q4", text: "Ваш новый вопрос?", answer: "правильный ответ" }
+    ];
+
+    // 2. Список статей (добавляйте новые сюда)
+    const articles = [
+        { title: "Люди-батарейки, Архонты и Иисусова молитва", url: "https://telegra.ph/Lyudi-batarejki-Arhonty-i-Iisusova-molitva-kak-sobrat-kartu-mira-iz-tripov-gnosticizma-pravoslaviya-i-Tibetskoj-knigi-Myortvyh-07-31" }
+        // Добавьте другие статьи:
+        // { title: "Название второй статьи", url: "https://ваша-ссылка-2" },
+        // { title: "Название третьей статьи", url: "https://ваша-ссылка-3" }
+    ];
+
+    // ============================================================
+    //  КОД (ничего не трогайте, если не уверены)
+    // ============================================================
+
+    let unlocked = false;
+
+    // Генерация полей для вопросов
+    function renderQuestions() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = '';
+        questions.forEach((q, index) => {
+            const div = document.createElement('div');
+            div.className = 'question-item';
+            div.innerHTML = `
+                <label>${index + 1}. ${q.text}</label>
+                <input type="text" id="${q.id}" placeholder="Введите ответ">
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // Генерация списка статей
+    function renderArticles() {
+        const container = document.getElementById('articlesContainer');
+        container.innerHTML = '';
+        articles.forEach((article) => {
+            const div = document.createElement('div');
+            div.className = 'article-item' + (unlocked ? ' unlocked' : '');
+            div.innerHTML = `
+                <span class="article-title">${article.title}</span>
+                <span class="lock-icon">${unlocked ? '🔓' : '🔒'}</span>
+                ${unlocked 
+                    ? `<a href="${article.url}" class="article-link" target="_blank">Читать →</a>` 
+                    : `<span class="article-link" style="background:#e5e7eb;color:#9ca3af;cursor:default;">Закрыто</span>`
                 }
-            }
+            `;
+            container.appendChild(div);
+        });
+    }
 
-            const resultDiv = document.getElementById('result');
-            if (allCorrect) {
-                resultDiv.innerHTML = '✅ Все верно! Переход на секретную страницу...';
-                resultDiv.style.color = 'green';
-                setTimeout(() => {
-                    window.location.href = SECRET_URL;
-                }, 1500);
-            } else {
-                resultDiv.innerHTML = '❌ Не все ответы правильные. Попробуйте ещё раз.';
-                resultDiv.style.color = 'red';
+    // Проверка ответов (регистр не важен – оба приводим к нижнему регистру)
+    function checkAnswers() {
+        if (unlocked) {
+            document.getElementById('result').innerHTML = '✅ Доступ уже открыт.';
+            document.getElementById('result').style.color = 'green';
+            return;
+        }
+
+        let allCorrect = true;
+        for (let q of questions) {
+            const userAnswer = document.getElementById(q.id).value.trim().toLowerCase();
+            const correct = q.answer.toLowerCase(); // на всякий случай, если кто-то написал с заглавной
+            if (userAnswer !== correct) {
+                allCorrect = false;
+                break;
             }
         }
-    </script>
+
+        const resultDiv = document.getElementById('result');
+        if (allCorrect) {
+            unlocked = true;
+            resultDiv.innerHTML = '✅ Все верно! Статьи разблокированы.';
+            resultDiv.style.color = 'green';
+            renderArticles();
+        } else {
+            resultDiv.innerHTML = '❌ Не все ответы правильные. Попробуйте ещё раз.';
+            resultDiv.style.color = 'red';
+        }
+    }
+
+    // Инициализация
+    renderQuestions();
+    renderArticles();
+</script>
 </body>
 </html>
