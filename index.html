@@ -41,6 +41,14 @@
             border-radius: 8px;
             font-size: 16px;
         }
+        .hint {
+            font-size: 14px;
+            color: #4b5563;
+            margin: 10px 0 15px 0;
+            background: #f3f4f6;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
         button {
             padding: 12px 30px;
             font-size: 16px;
@@ -112,6 +120,7 @@
 
     <div class="quiz-area">
         <div id="questionsContainer"></div>
+        <div class="hint">💡 Регистр ответов не важен – можно писать с большой или маленькой буквы.</div>
         <button onclick="checkAnswers()">🔓 Разблокировать</button>
         <div id="result" class="result"></div>
     </div>
