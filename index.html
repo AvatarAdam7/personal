@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Викторина</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; background: #f9f9f9; }
+        .question { margin-bottom: 20px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 30px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>📝 Для доступа к статье ответьте на вопросы</h1>
+    <div id="quiz">
+        <div class="question">
+            <p><strong>1.</strong> Как имя автора?</p>
+            <input type="text" id="q1" placeholder="Ваш ответ">
+        </div>
+        <div class="question">
+            <p><strong>2.</strong> Что такое поза лотоса (Телесная поза или Сотояние ума)?</p>
+            <input type="text" id="q2" placeholder="Ваш ответ">
+        </div>
+        <div class="question">
+            <p><strong>3.</strong> Кодовое слово?</p>
+            <input type="text" id="q3" placeholder="Ваш ответ">
+        </div>
+        <button onclick="checkAnswers()">Проверить</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // ⚠️ ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ СЕКРЕТНУЮ СТРАНИЦУ
+        const SECRET_URL = "https://telegra.ph/Lyudi-batarejki-Arhonty-i-Iisusova-molitva-kak-sobrat-kartu-mira-iz-tripov-gnosticizma-pravoslaviya-i-Tibetskoj-knigi-Myortvyh-07-31";
+
+        // Правильные ответы (всё приводится к нижнему регистру)
+        const correctAnswers = {
+            q1: "Роман",
+            q2: "Состояние ума",
+            q3: "Брахма"
+        };
+
+        function checkAnswers() {
+            const userAnswers = {
+                q1: document.getElementById('q1').value.trim().toLowerCase(),
+                q2: document.getElementById('q2').value.trim().toLowerCase(),
+                q3: document.getElementById('q3').value.trim().toLowerCase()
+            };
+
+            let allCorrect = true;
+            for (let key in correctAnswers) {
+                if (userAnswers[key] !== correctAnswers[key]) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+
+            const resultDiv = document.getElementById('result');
+            if (allCorrect) {
+                resultDiv.innerHTML = '✅ Все верно! Переход на секретную страницу...';
+                resultDiv.style.color = 'green';
+                setTimeout(() => {
+                    window.location.href = SECRET_URL;
+                }, 1500);
+            } else {
+                resultDiv.innerHTML = '❌ Не все ответы правильные. Попробуйте ещё раз.';
+                resultDiv.style.color = 'red';
+            }
+        }
+    </script>
+</body>
+</html>
