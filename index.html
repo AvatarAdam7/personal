@@ -8,7 +8,7 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            max-width: 700px;
+            max-width: 800px;
             margin: 40px auto;
             padding: 20px;
             background: #f0f2f5;
@@ -20,8 +20,22 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         h1 { margin-top: 0; color: #1a1a2e; }
-        .quiz-area {
+        .header-links {
             background: #eef2ff;
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .header-links a {
+            display: inline-block;
+            margin: 4px 10px 4px 0;
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .header-links a:hover { text-decoration: underline; }
+        .quiz-area {
+            background: #f9fafb;
             padding: 20px;
             border-radius: 12px;
             margin: 20px 0;
@@ -54,13 +68,6 @@
             width: 18px;
             height: 18px;
             cursor: pointer;
-        }
-        .question-item input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
         }
         .hint {
             font-size: 14px;
@@ -131,13 +138,19 @@
         .unlocked .article-link:hover {
             background: #16a34a;
         }
-        .hidden { display: none; }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>📚 Доступ к секретным статьям</h1>
-    <p>Ответьте на вопросы ниже, чтобы разблокировать все статьи.</p>
+
+    <!-- Шапка со ссылкой на статью (и другими, если добавите) -->
+    <div class="header-links">
+        <p><strong>📖 Статьи, к которым вы получаете доступ:</strong></p>
+        <div id="headerLinksContainer"></div>
+    </div>
+
+    <p>Ответьте на все вопросы, чтобы разблокировать статьи.</p>
 
     <div class="quiz-area">
         <div id="questionsContainer"></div>
@@ -147,17 +160,32 @@
     </div>
 
     <div class="articles-list">
-        <h2>📄 Статьи</h2>
+        <h2>📄 Список статей</h2>
         <div id="articlesContainer"></div>
     </div>
 </div>
 
 <script>
+    // =============================================================
+    //  НАСТРОЙКИ
+    // =============================================================
     const SALT = "mysalt";
 
-    // ============================================================
-    //  10 ВОПРОСОВ (9 с выбором, 1 кодовое слово)
-    // ============================================================
+    // Список статей (добавляйте новые сюда)
+    const articles = [
+        {
+            title: "Люди-батарейки, Архонты и Иисусова молитва",
+            url: "https://telegra.ph/Lyudi-batarejki-Arhonty-i-Iisusova-molitva-kak-sobrat-kartu-mira-iz-tripov-gnosticizma-pravoslaviya-i-Tibetskoj-knigi-Myortvyh-07-31"
+        },
+        // Добавляйте новые статьи по образцу
+    ];
+
+    // =============================================================
+    //  ВОПРОСЫ (все с выбором вариантов)
+    //  ВНИМАНИЕ: в поле correct должен быть ХЕШ правильного ответа,
+    //  а не сам ответ. Хеш вычисляется с помощью hash.html.
+    //  Для каждого ответа используйте соль "mysalt" (ту же, что выше).
+    // =============================================================
     const questions = [
         {
             id: "q1",
@@ -178,73 +206,87 @@
             text: "Что такое душа человека в гностицизме?",
             type: "choice",
             options: ["Материальная оболочка", "Искра Божественного света", "Часть Демиурга", "Творение архонтов"],
-            correct: "Искра Божественного света"
+            correct: "c8c51e0f6c9717fac4fe004aad1985a5f5f88ffcdf61e168e28765848d8785c6"
         },
         {
             id: "q4",
             text: "Что такое «ловушка света» согласно гностическому учению?",
             type: "choice",
             options: ["Путь к Истинному Богу", "Обманный путь к перевоплощению", "Испытание души", "Награда праведников"],
-            correct: "Обманный путь к перевоплощению"
+            correct: "Зb89ec3a2476211fbc408047436b80c60296225d4b515a28d082f562fe720fdcf"
         },
         {
             id: "q5",
             text: "Как Христос помогает в гностической картине мира?",
             type: "choice",
             options: ["Создаёт материальный мир", "Показывает путь обхода ловушек архонтов", "Уничтожает Демиурга", "Дарует богатство"],
-            correct: "Показывает путь обхода ловушек архонтов"
+            correct: "af4b2e6d26cb2435db421ffbcc6b3c1be2147377e77ac7984487fb2c8d5046be"
         },
         {
             id: "q6",
             text: "Что, согласно апостолу Павлу, представляют собой архонты?",
             type: "choice",
             options: ["Слуги сатаны", "Творцы материального мира", "Авторы Ветхого Завета", "Добрые ангелы"],
-            correct: "Слуги сатаны"
+            correct: "ff5366d5c6d4cec7cd85b8f9c2f872b101be4896ff0cad2c24cf217222675be3"
         },
         {
             id: "q7",
             text: "Согласно святым отцам, почему при Иисусовой молитве возникают скорби?",
             type: "choice",
             options: ["Бог наказывает молящегося", "Бесы мстят человеку", "Молитва неправильная", "Человек слишком грешен"],
-            correct: "Бесы мстят человеку"
+            correct: "9cd573128e1c1ebd0a2b2da09c3650e62c14fb9a83c58e2c174647cd73a8e607"
         },
         {
             id: "q8",
             text: "Каковы характеристики Истинного Света согласно «Тибетской книге мёртвых»?",
             type: "choice",
             options: ["Манит любовью и покоем", "Вызывает страх и трепет", "Обещает счастье", "Убаюкивает"],
-            correct: "Вызывает страх и трепет"
+            correct: "547f7eb78cee9ff175748bde9197846dd436a1e14b9b77654e3250a372df9a9d"
         },
         {
             id: "q9",
             text: "Каковы характеристики Ложного Света?",
             type: "choice",
             options: ["Пугает, размывает сознание", "Манит обещанием счастья", "Заставляет отказаться от «я»", "Не даёт никаких ощущений"],
-            correct: "Манит обещанием счастья"
+            correct: "c0630aa7558c9bfa50472d9ff2aaaedb915073c1b5dc873dda9e8f3bfc05623c"
         },
         {
-            id: "q10",
-            text: "Кодовое слово (одно слово, из финальной части текста)?",
-            type: "text",
-            // ВНИМАНИЕ: здесь пока временный хеш для слова "сознание"
-            // Если вы хотите другое слово, замените хеш (см. инструкцию)
-            hash: "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
-        }
+    id: "q11",
+    text: "Почему мы обращаемся к Христу как к Господу, согласно данному отрывку?",
+    type: "choice",
+    options: [
+        "Потому что Христос — это отдельная личность, равная Отцу",
+        "Потому что Христос — это проявление Отца, Сознание, узнавшее себя, и мы обращаемся к единству внутри себя",
+        "Потому что Христос — это только человек, великий учитель",
+        "Потому что Христос — это Бог-Отец в прямом смысле"
+    ],
+    correct: "8fce2e27a2ed4fb854ef8b86ed214810f6b8f34533de8b6598b71b177b3e13c2"
+    }
     ];
 
-    const articles = [
-        { title: "Люди-батарейки, Архонты и Иисусова молитва", url: "https://telegra.ph/Lyudi-batarejki-Arhonty-i-Iisusova-molitva-kak-sobrat-kartu-mira-iz-tripov-gnosticizma-pravoslaviya-i-Tibetskoj-knigi-Myortvyh-07-31" },
-        { title: "Сон о переходе: руководство к тому, как не испугаться своей смерти", url: "https://telegra.ph/Son-o-perehode-rukovodstvo-k-tomu-kak-ne-ispugatsya-svoej-smerti-08-05" }
-    ];
+    // =============================================================
+    //  КОД (не трогайте)
+    // =============================================================
 
     let unlocked = false;
 
-    // Хеширование для текстовых ответов
     async function hashAnswer(answer) {
         const data = new TextEncoder().encode(answer.toLowerCase() + SALT);
         const hashBuffer = await crypto.subtle.digest('SHA-256', data);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function renderHeaderLinks() {
+        const container = document.getElementById('headerLinksContainer');
+        container.innerHTML = '';
+        articles.forEach((article) => {
+            const a = document.createElement('a');
+            a.href = article.url;
+            a.target = '_blank';
+            a.textContent = '🔗 ' + article.title;
+            container.appendChild(a);
+        });
     }
 
     function renderQuestions() {
@@ -253,16 +295,11 @@
         questions.forEach((q, index) => {
             const div = document.createElement('div');
             div.className = 'question-item';
-            let inputHtml = '';
-            if (q.type === 'choice') {
-                inputHtml = `<div class="options">`;
-                q.options.forEach((opt) => {
-                    inputHtml += `<label><input type="radio" name="${q.id}" value="${opt}"> ${opt}</label>`;
-                });
-                inputHtml += `</div>`;
-            } else { // text
-                inputHtml = `<input type="text" id="${q.id}" placeholder="Введите ответ">`;
-            }
+            let inputHtml = `<div class="options">`;
+            q.options.forEach((opt) => {
+                inputHtml += `<label><input type="radio" name="${q.id}" value="${opt}"> ${opt}</label>`;
+            });
+            inputHtml += `</div>`;
             div.innerHTML = `<label>${index + 1}. ${q.text}</label>${inputHtml}`;
             container.appendChild(div);
         });
@@ -295,25 +332,15 @@
 
         let allCorrect = true;
         for (let q of questions) {
-            if (q.type === 'choice') {
-                const selected = document.querySelector(`input[name="${q.id}"]:checked`);
-                if (!selected || selected.value !== q.correct) {
-                    allCorrect = false;
-                    break;
-                }
-            } else { // text
-                const input = document.getElementById(q.id);
-                if (!input) { allCorrect = false; break; }
-                const userAnswer = input.value.trim();
-                if (userAnswer === '') {
-                    allCorrect = false;
-                    break;
-                }
-                const userHash = await hashAnswer(userAnswer);
-                if (userHash !== q.hash) {
-                    allCorrect = false;
-                    break;
-                }
+            const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+            if (!selected) {
+                allCorrect = false;
+                break;
+            }
+            const userHash = await hashAnswer(selected.value);
+            if (userHash !== q.correct) {
+                allCorrect = false;
+                break;
             }
         }
 
@@ -329,8 +356,38 @@
         }
     }
 
+    // Инициализация
+    renderHeaderLinks();
     renderQuestions();
     renderArticles();
 </script>
+
+<!-- ============================================================
+     ИНСТРУКЦИЯ ДЛЯ АВТОРА (видна только в коде)
+     ============================================================
+     1. Чтобы добавить новую статью:
+        - Добавьте объект в массив articles:
+          { title: "Название", url: "https://ссылка" }
+        - Статья автоматически появится в шапке и в списке.
+
+     2. Чтобы добавить новый вопрос (choice):
+        - Добавьте объект в массив questions:
+          {
+            id: "q11",
+            text: "Текст вопроса",
+            type: "choice",
+            options: ["Вариант A", "Вариант B", "Вариант C"],
+            correct: "ХЕШ_ПРАВИЛЬНОГО_ОТВЕТА"
+          }
+        - id должен быть уникальным (q11, q12, ...).
+        - Для вычисления хеша правильного ответа откройте hash.html,
+          введите ответ (с той же солью) и скопируйте полученный хеш.
+        - Замените плейсхолдер ЗАМЕНИТЕ_НА_ХЕШ_... на реальный хеш.
+
+     3. Если вы меняете соль (SALT), не забудьте пересчитать все хеши.
+
+     4. Все изменения вступают в силу после загрузки файла на GitHub
+        и ожидания синхронизации (1–2 минуты).
+-->
 </body>
 </html>
