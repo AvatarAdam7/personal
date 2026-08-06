@@ -141,6 +141,18 @@
     </style>
 </head>
 <body>
+
+<!--
+████████████████████████████████████████████████████████████████████████████████
+██                                                                            ██
+██   ХИТРОЖОПОСТЬ БЕЗ ЗНАНИЙ НЕ ПОМОЖЕТ В ПЕРЕХОДЕ, ЗАПОМНИ ХАКЕР 😉          ██
+██                                                                            ██
+██                                                                            ██
+██                                                                            ██
+██                                                                            ██
+████████████████████████████████████████████████████████████████████████████████
+-->
+
 <div class="container">
     <h1>📚 Доступ к секретным статьям</h1>
 
@@ -171,93 +183,85 @@
     // =============================================================
     const SALT = "mysalt";
 
+    // Один общий хеш от ВСЕХ правильных ответов сразу
+    // (ответы склеиваются через "|" в нижнем регистре + SALT, затем SHA-256)
+    const FINAL_HASH = "18d583a9088be18c5854cd4d8fff749e633c6f9cbb467344befc61f73de75947";
+
     // СТАТЬЯ-ИСТОЧНИК (всегда открыта, выводится в шапке)
     const sourceArticles = [
         {
             title: "🛸 Люди-батарейки, Архонты и Иисусова молитва",
             url: "https://telegra.ph/Lyudi-batarejki-Arhonty-i-Iisusova-molitva-kak-sobrat-kartu-mira-iz-tripov-gnosticizma-pravoslaviya-i-Tibetskoj-knigi-Myortvyh-07-31"
         }
-        // Можно добавить ещё открытых статей-источников
     ];
 
-    // ЗАБЛОКИРОВАННЫЕ СТАТЬИ (откроются после прохождения викторины)
+    // ЗАБЛОКИРОВАННЫЕ СТАТЬИ
+    // url теперь хранится в зашифрованном виде (XOR + Base64).
+    // Расшифровывается только при правильном FINAL_HASH.
     const articles = [
         {
             title: "🌉 Сон о переходе: руководство к тому, как не испугаться своей смерти",
-            url: "https://telegra.ph/Son-o-perehode-rukovodstvo-k-tomu-kak-ne-ispugatsya-svoej-smerti-08-05"
+            encryptedUrl: "WUwQRUsJThZEXVQHAkNZTUVQGmcMChkLFRYDFFJcVgFTHkEWXQlPDAYRQEBYHl8ZFgoLFhtaB1weCgAaXEpEQlZZEEZBUkxKRlddCEhCVQZHTFwZU1wZVA0="
         }
-        // Добавляйте сюда статьи, которые должны быть закрыты
     ];
 
     // =============================================================
-    //  ВОПРОСЫ (все с выбором вариантов)
-    //  ВНИМАНИЕ: в поле correct должен быть ХЕШ правильного ответа,
-    //  а не сам ответ. Хеш вычисляется с помощью hash.html.
-    //  Для каждого ответа используйте соль "mysalt" (ту же, что выше).
+    //  ВОПРОСЫ (варианты есть, но отдельных хешей ответов больше нет)
     // =============================================================
     const questions = [
         {
             id: "q1",
             text: "Кто в гностицизме создал материальный мир?",
             type: "choice",
-            options: ["Истинный Бог", "Демиург", "Христос", "Архонты"],
-            correct: "386a35cb394ea37381842e3a23cf86f6550902f195522e1eb49912a0870fa803"
+            options: ["Истинный Бог", "Демиург", "Христос", "Архонты"]
         },
         {
             id: "q2",
             text: "Кто такие Архонты в гностической модели?",
             type: "choice",
-            options: ["Слуги Истинного Бога", "Слуги Демиурга", "Посланники Христа", "Ангелы-хранители"],
-            correct: "33355cb3a8a0f0d0b5947ef90f7dc70cceb8fb7bfb3e7c6128ac4cd983195a33"
+            options: ["Слуги Истинного Бога", "Слуги Демиурга", "Посланники Христа", "Ангелы-хранители"]
         },
         {
             id: "q3",
             text: "Что такое душа человека в гностицизме?",
             type: "choice",
-            options: ["Материальная оболочка", "Искра Божественного света", "Часть Демиурга", "Творение архонтов"],
-            correct: "c8c51e0f6c9717fac4fe004aad1985a5f5f88ffcdf61e168e28765848d8785c6"
+            options: ["Материальная оболочка", "Искра Божественного света", "Часть Демиурга", "Творение архонтов"]
         },
         {
             id: "q4",
             text: "Что такое «ловушка света» согласно гностическому учению?",
             type: "choice",
-            options: ["Путь к Истинному Богу", "Обманный путь к перевоплощению", "Испытание души", "Награда праведников"],
-            correct: "b89ec3a2476211fbc408047436b80c60296225d4b515a28d082f562fe720fdcf"
+            options: ["Путь к Истинному Богу", "Обманный путь к перевоплощению", "Испытание души", "Награда праведников"]
         },
         {
             id: "q5",
             text: "Как Христос помогает в гностической картине мира?",
             type: "choice",
-            options: ["Создаёт материальный мир", "Показывает путь обхода ловушек архонтов", "Уничтожает Демиурга", "Дарует богатство"],
-            correct: "af4b2e6d26cb2435db421ffbcc6b3c1be2147377e77ac7984487fb2c8d5046be"
+            options: ["Создаёт материальный мир", "Показывает путь обхода ловушек архонтов", "Уничтожает Демиурга", "Дарует богатство"]
         },
         {
             id: "q6",
             text: "Что, согласно апостолу Павлу, представляют собой архонты?",
             type: "choice",
-            options: ["Слуги сатаны", "Творцы материального мира", "Авторы Ветхого Завета", "Добрые ангелы"],
-            correct: "ff5366d5c6d4cec7cd85b8f9c2f872b101be4896ff0cad2c24cf217222675be3"
+            options: ["Слуги сатаны", "Творцы материального мира", "Авторы Ветхого Завета", "Добрые ангелы"]
         },
         {
             id: "q7",
             text: "Согласно святым отцам, почему при Иисусовой молитве возникают скорби?",
             type: "choice",
-            options: ["Бог наказывает молящегося", "Бесы мстят человеку", "Молитва неправильная", "Человек слишком грешен"],
-            correct: "9cd573128e1c1ebd0a2b2da09c3650e62c14fb9a83c58e2c174647cd73a8e607"
+            options: ["Бог наказывает молящегося", "Бесы мстят человеку", "Молитва неправильная", "Человек слишком грешен"]
         },
         {
             id: "q8",
             text: "Каковы характеристики Истинного Света согласно «Тибетской книге мёртвых»?",
             type: "choice",
-            options: ["Манит любовью и покоем", "Вызывает страх и трепет", "Обещает счастье", "Убаюкивает"],
-            correct: "547f7eb78cee9ff175748bde9197846dd436a1e14b9b77654e3250a372df9a9d"
+            options: ["Манит любовью и покоем", "Вызывает страх и трепет", "Обещает счастье", "Убаюкивает"]
         },
         {
             id: "q9",
             text: "Каковы характеристики Ложного Света?",
             type: "choice",
-            options: ["Пугает, размывает сознание", "Манит обещанием счастья", "Заставляет отказаться от «я»", "Не даёт никаких ощущений"],
-            correct: "c0630aa7558c9bfa50472d9ff2aaaedb915073c1b5dc873dda9e8f3bfc05623c"
+            options: ["Пугает, размывает сознание", "Манит обещанием счастья", "Заставляет отказаться от «я»", "Не даёт никаких ощущений"]
         },
         {
             id: "q11",
@@ -268,22 +272,36 @@
                 "Потому что Христос — это проявление Отца, Сознание, узнавшее себя, и мы обращаемся к единству внутри себя",
                 "Потому что Христос — это только человек, великий учитель",
                 "Потому что Христос — это Бог-Отец в прямом смысле"
-            ],
-            correct: "8fce2e27a2ed4fb854ef8b86ed214810f6b8f34533de8b6598b71b177b3e13c2"
+            ]
         }
     ];
 
     // =============================================================
-    //  КОД (не трогайте)
+    //  КОД
     // =============================================================
 
     let unlocked = false;
+    let decryptedUrls = {}; // кэш расшифрованных ссылок
 
     async function hashAnswer(answer) {
         const data = new TextEncoder().encode(answer.toLowerCase() + SALT);
         const hashBuffer = await crypto.subtle.digest('SHA-256', data);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Простой XOR + Base64
+    function xorDecrypt(base64Str, key) {
+        try {
+            const encrypted = Uint8Array.from(atob(base64Str), c => c.charCodeAt(0));
+            const decrypted = new Uint8Array(encrypted.length);
+            for (let i = 0; i < encrypted.length; i++) {
+                decrypted[i] = encrypted[i] ^ key.charCodeAt(i % key.length);
+            }
+            return new TextDecoder().decode(decrypted);
+        } catch (e) {
+            return null;
+        }
     }
 
     // Отображаем открытые статьи-источники
@@ -318,14 +336,15 @@
     function renderArticles() {
         const container = document.getElementById('articlesContainer');
         container.innerHTML = '';
-        articles.forEach((article) => {
+        articles.forEach((article, idx) => {
             const div = document.createElement('div');
             div.className = 'article-item' + (unlocked ? ' unlocked' : '');
+            const url = unlocked ? (decryptedUrls[idx] || '#') : null;
             div.innerHTML = `
                 <span class="article-title">${article.title}</span>
                 <span class="lock-icon">${unlocked ? '🔓' : '🔒'}</span>
-                ${unlocked 
-                    ? `<a href="${article.url}" class="article-link" target="_blank">Читать →</a>` 
+                ${unlocked && url
+                    ? `<a href="${url}" class="article-link" target="_blank">Читать →</a>`
                     : `<span class="article-link" style="background:#e5e7eb;color:#9ca3af;cursor:default;">Закрыто</span>`
                 }
             `;
@@ -340,22 +359,41 @@
             return;
         }
 
-        let allCorrect = true;
+        // Собираем ответы в том же порядке, что и questions
+        const selectedAnswers = [];
+        let allAnswered = true;
+
         for (let q of questions) {
             const selected = document.querySelector(`input[name="${q.id}"]:checked`);
             if (!selected) {
-                allCorrect = false;
+                allAnswered = false;
                 break;
             }
-            const userHash = await hashAnswer(selected.value);
-            if (userHash !== q.correct) {
-                allCorrect = false;
-                break;
-            }
+            selectedAnswers.push(selected.value);
         }
 
         const resultDiv = document.getElementById('result');
-        if (allCorrect) {
+
+        if (!allAnswered) {
+            resultDiv.innerHTML = '❌ Ответьте на все вопросы.';
+            resultDiv.style.color = 'red';
+            return;
+        }
+
+        // Склеиваем ответы точно так же, как при генерации FINAL_HASH
+        const combined = selectedAnswers.map(a => a.toLowerCase()).join('|') + SALT;
+        const data = new TextEncoder().encode(combined);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const finalUserHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        if (finalUserHash === FINAL_HASH) {
+            // Расшифровываем URL-ы (ключ = FINAL_HASH)
+            articles.forEach((article, idx) => {
+                const url = xorDecrypt(article.encryptedUrl, FINAL_HASH);
+                if (url) decryptedUrls[idx] = url;
+            });
+
             unlocked = true;
             resultDiv.innerHTML = '✅ Все верно! Статьи разблокированы.';
             resultDiv.style.color = 'green';
@@ -378,30 +416,30 @@
      1. Чтобы добавить открытую статью-источник (в шапку):
         - Добавьте объект в массив sourceArticles:
           { title: "Название", url: "https://ссылка" }
-        - Она сразу будет доступна всем.
 
-     2. Чтобы добавить заблокированную статью (с замком):
-        - Добавьте объект в массив articles:
-          { title: "Название", url: "https://ссылка" }
-        - Она откроется только после прохождения викторины.
+     2. Чтобы добавить заблокированную статью:
+        - Зашифруйте URL с помощью XOR + Base64, используя ключ = FINAL_HASH
+        - Добавьте:
+          { title: "Название", encryptedUrl: "зашифрованная_строка" }
 
-     3. Чтобы добавить новый вопрос (choice):
-        - Добавьте объект в массив questions:
-          {
-            id: "q12",
-            text: "Текст вопроса",
-            type: "choice",
-            options: ["Вариант A", "Вариант B", "Вариант C"],
-            correct: "ХЕШ_ПРАВИЛЬНОГО_ОТВЕТА"
-          }
-        - id должен быть уникальным (q12, q13, ...).
-        - Для вычисления хеша правильного ответа откройте hash.html,
-          введите ответ (с той же солью) и скопируйте полученный хеш.
+     3. Чтобы изменить/добавить вопросы:
+        - Просто правьте массив questions (options).
+        - После изменения правильных ответов ОБЯЗАТЕЛЬНО пересчитайте FINAL_HASH:
+          Склейте все правильные ответы через "|" в нижнем регистре,
+          добавьте SALT в конец, посчитайте SHA-256.
+          Пример генерации (Python):
+            answers = ["ответ1", "ответ2", ...]
+            combined = "|".join(a.lower() for a in answers) + "mysalt"
+            hashlib.sha256(combined.encode()).hexdigest()
 
-     4. Если вы меняете соль (SALT), не забудьте пересчитать все хеши.
+     4. Если меняете SALT — пересчитайте FINAL_HASH и заново зашифруйте все URL.
 
-     5. Все изменения вступают в силу после загрузки файла на GitHub
-        и ожидания синхронизации (1–2 минуты).
+     5. Защита сильнее, чем раньше:
+        - В коде больше нет отдельных хешей ответов → нельзя быстро сопоставить вариант.
+        - URL статьи зашифрован и появляется только после правильного общего хеша.
+        - Полностью обойти всё равно можно через консоль (unlocked = true), 
+          но для этого уже нужно понимать код, а не просто смотреть хеши.
 -->
 </body>
 </html>
+
