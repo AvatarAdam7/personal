@@ -147,8 +147,7 @@
 ██                                                                            ██
 ██   ХИТРОЖОПОСТЬ БЕЗ ЗНАНИЙ НЕ ПОМОЖЕТ В ПЕРЕХОДЕ, ЗАПОМНИ ХАКЕР 😉          ██
 ██                                                                            ██
-██                                                                            ██
-██                                                                            ██
+██   			                                                              ██
 ██                                                                            ██
 ████████████████████████████████████████████████████████████████████████████████
 -->
@@ -183,8 +182,7 @@
     // =============================================================
     const SALT = "mysalt";
 
-    // Один общий хеш от ВСЕХ правильных ответов сразу
-    // (ответы склеиваются через "|" в нижнем регистре + SALT, затем SHA-256)
+    // Проверочный хеш
     const FINAL_HASH = "18d583a9088be18c5854cd4d8fff749e633c6f9cbb467344befc61f73de75947";
 
     // СТАТЬЯ-ИСТОЧНИК (всегда открыта, выводится в шапке)
@@ -196,8 +194,6 @@
     ];
 
     // ЗАБЛОКИРОВАННЫЕ СТАТЬИ
-    // url теперь хранится в зашифрованном виде (XOR + Base64).
-    // Расшифровывается только при правильном FINAL_HASH.
     const articles = [
         {
             title: "🌉 Сон о переходе: руководство к тому, как не испугаться своей смерти",
@@ -281,7 +277,7 @@
     // =============================================================
 
     let unlocked = false;
-    let decryptedUrls = {}; // кэш расшифрованных ссылок
+    let decryptedUrls = {};
 
     async function hashAnswer(answer) {
         const data = new TextEncoder().encode(answer.toLowerCase() + SALT);
@@ -290,7 +286,6 @@
         return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // Простой XOR + Base64
     function xorDecrypt(base64Str, key) {
         try {
             const encrypted = Uint8Array.from(atob(base64Str), c => c.charCodeAt(0));
@@ -380,7 +375,6 @@
             return;
         }
 
-        // Склеиваем ответы точно так же, как при генерации FINAL_HASH
         const combined = selectedAnswers.map(a => a.toLowerCase()).join('|') + SALT;
         const data = new TextEncoder().encode(combined);
         const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -388,7 +382,6 @@
         const finalUserHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
         if (finalUserHash === FINAL_HASH) {
-            // Расшифровываем URL-ы (ключ = FINAL_HASH)
             articles.forEach((article, idx) => {
                 const url = xorDecrypt(article.encryptedUrl, FINAL_HASH);
                 if (url) decryptedUrls[idx] = url;
@@ -410,36 +403,6 @@
     renderArticles();
 </script>
 
-<!-- ============================================================
-     ИНСТРУКЦИЯ ДЛЯ АВТОРА (видна только в коде)
-     ============================================================
-     1. Чтобы добавить открытую статью-источник (в шапку):
-        - Добавьте объект в массив sourceArticles:
-          { title: "Название", url: "https://ссылка" }
-
-     2. Чтобы добавить заблокированную статью:
-        - Зашифруйте URL с помощью XOR + Base64, используя ключ = FINAL_HASH
-        - Добавьте:
-          { title: "Название", encryptedUrl: "зашифрованная_строка" }
-
-     3. Чтобы изменить/добавить вопросы:
-        - Просто правьте массив questions (options).
-        - После изменения правильных ответов ОБЯЗАТЕЛЬНО пересчитайте FINAL_HASH:
-          Склейте все правильные ответы через "|" в нижнем регистре,
-          добавьте SALT в конец, посчитайте SHA-256.
-          Пример генерации (Python):
-            answers = ["ответ1", "ответ2", ...]
-            combined = "|".join(a.lower() for a in answers) + "mysalt"
-            hashlib.sha256(combined.encode()).hexdigest()
-
-     4. Если меняете SALT — пересчитайте FINAL_HASH и заново зашифруйте все URL.
-
-     5. Защита сильнее, чем раньше:
-        - В коде больше нет отдельных хешей ответов → нельзя быстро сопоставить вариант.
-        - URL статьи зашифрован и появляется только после правильного общего хеша.
-        - Полностью обойти всё равно можно через консоль (unlocked = true), 
-          но для этого уже нужно понимать код, а не просто смотреть хеши.
--->
 </body>
 </html>
 
