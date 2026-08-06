@@ -138,6 +138,55 @@
         .unlocked .article-link:hover {
             background: #16a34a;
         }
+
+        /* ===== Супер-секретный блок ===== */
+        .super-secret {
+            margin-top: 40px;
+            border-top: 3px dashed #7c3aed;
+            padding-top: 25px;
+        }
+        .super-secret h2 {
+            color: #6d28d9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .super-input-area {
+            background: #f5f3ff;
+            padding: 18px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd6fe;
+        }
+        .super-input-area input[type="password"],
+        .super-input-area input[type="text"] {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 16px;
+            border: 1px solid #c4b5fd;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .super-input-area button {
+            background: #7c3aed;
+        }
+        .super-input-area button:hover {
+            background: #6d28d9;
+        }
+        .super-articles .article-item {
+            border-left-color: #a78bfa;
+            background: #faf5ff;
+        }
+        .super-articles .article-item.unlocked {
+            border-left-color: #7c3aed;
+            background: #f3e8ff;
+        }
+        .super-articles .unlocked .article-link {
+            background: #7c3aed;
+        }
+        .super-articles .unlocked .article-link:hover {
+            background: #6d28d9;
+        }
     </style>
 </head>
 <body>
@@ -174,6 +223,25 @@
         <h2>📄 Заблокированная статья</h2>
         <div id="articlesContainer"></div>
     </div>
+
+    <!-- ============================================================
+         ОТДЕЛЬНЫЙ БЛОК: СУПЕР-СЕКРЕТНО
+         Не связан с викториной. Открывается только личным кодом.
+         ============================================================ -->
+    <div class="super-secret">
+        <h2>🔮 Супер-секретно</h2>
+        <p>Доступ только по личному коду.</p>
+
+        <div class="super-input-area">
+            <input type="password" id="personalCode" placeholder="Введите личный код..." autocomplete="off">
+            <button onclick="checkPersonalAccess()">🔑 Открыть</button>
+            <div id="superResult" class="result"></div>
+        </div>
+
+        <div class="super-articles">
+            <div id="superArticlesContainer"></div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -182,8 +250,12 @@
     // =============================================================
     const SALT = "mysalt";
 
-    // Проверочный хеш
+    // Проверочный хеш обычной викторины
     const FINAL_HASH = "18d583a9088be18c5854cd4d8fff749e633c6f9cbb467344befc61f73de75947";
+
+    // Личный хеш для супер-секретного блока
+    // Сгенерируй через hash.html: введи свой секретный код + соль → получи хеш
+    const PERSONAL_HASH = "8d770d89aaa3aa7d1506494d4d9f7407b3e8b0031fd8a7dd70fbdad495a4c016";
 
     // СТАТЬЯ-ИСТОЧНИК (всегда открыта, выводится в шапке)
     const sourceArticles = [
@@ -193,7 +265,7 @@
         }
     ];
 
-    // ЗАБЛОКИРОВАННЫЕ СТАТЬИ
+    // ЗАБЛОКИРОВАННЫЕ СТАТЬИ (открываются после викторины)
     const articles = [
         {
             title: "🌉 Сон о переходе: руководство к тому, как не испугаться своей смерти",
@@ -201,8 +273,17 @@
         }
     ];
 
+    // СУПЕР-СЕКРЕТНЫЕ СТАТЬИ (открываются только личным кодом)
+    const superArticles = [
+        {
+            title: "🔒 Опыт изменивший мою жизнь",
+            encryptedUrl: "10a2a24d126a9f85c7051c0d57c41809a601061d5ed3ed9aa741df86a3492693"
+        }
+        // Добавляй сюда ещё объекты по тому же принципу
+    ];
+
     // =============================================================
-    //  ВОПРОСЫ (варианты есть, но отдельных хешей ответов больше нет)
+    //  ВОПРОСЫ
     // =============================================================
     const questions = [
         {
@@ -277,14 +358,9 @@
     // =============================================================
 
     let unlocked = false;
+    let superUnlocked = false;
     let decryptedUrls = {};
-
-    async function hashAnswer(answer) {
-        const data = new TextEncoder().encode(answer.toLowerCase() + SALT);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
+    let superDecryptedUrls = {};
 
     function xorDecrypt(base64Str, key) {
         try {
@@ -299,7 +375,6 @@
         }
     }
 
-    // Отображаем открытые статьи-источники
     function renderHeaderLinks() {
         const container = document.getElementById('headerLinksContainer');
         container.innerHTML = '';
@@ -347,6 +422,25 @@
         });
     }
 
+    function renderSuperArticles() {
+        const container = document.getElementById('superArticlesContainer');
+        container.innerHTML = '';
+        superArticles.forEach((article, idx) => {
+            const div = document.createElement('div');
+            div.className = 'article-item' + (superUnlocked ? ' unlocked' : '');
+            const url = superUnlocked ? (superDecryptedUrls[idx] || '#') : null;
+            div.innerHTML = `
+                <span class="article-title">${article.title}</span>
+                <span class="lock-icon">${superUnlocked ? '🔓' : '🔒'}</span>
+                ${superUnlocked && url
+                    ? `<a href="${url}" class="article-link" target="_blank">Читать →</a>`
+                    : `<span class="article-link" style="background:#e5e7eb;color:#9ca3af;cursor:default;">Закрыто</span>`
+                }
+            `;
+            container.appendChild(div);
+        });
+    }
+
     async function checkAnswers() {
         if (unlocked) {
             document.getElementById('result').innerHTML = '✅ Доступ уже открыт.';
@@ -354,7 +448,6 @@
             return;
         }
 
-        // Собираем ответы в том же порядке, что и questions
         const selectedAnswers = [];
         let allAnswered = true;
 
@@ -397,10 +490,54 @@
         }
     }
 
+    // ===== Супер-секретный доступ =====
+    async function checkPersonalAccess() {
+        if (superUnlocked) {
+            document.getElementById('superResult').innerHTML = '✅ Супер-доступ уже открыт.';
+            document.getElementById('superResult').style.color = 'green';
+            return;
+        }
+
+        const code = document.getElementById('personalCode').value.trim();
+        const resultDiv = document.getElementById('superResult');
+
+        if (!code) {
+            resultDiv.innerHTML = '❌ Введите код.';
+            resultDiv.style.color = 'red';
+            return;
+        }
+
+        const data = new TextEncoder().encode(code.toLowerCase() + SALT);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const userHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        if (userHash === PERSONAL_HASH) {
+            superArticles.forEach((article, idx) => {
+                const url = xorDecrypt(article.encryptedUrl, PERSONAL_HASH);
+                if (url) superDecryptedUrls[idx] = url;
+            });
+
+            superUnlocked = true;
+            resultDiv.innerHTML = '✅ Супер-доступ открыт.';
+            resultDiv.style.color = 'green';
+            renderSuperArticles();
+        } else {
+            resultDiv.innerHTML = '❌ Неверный код.';
+            resultDiv.style.color = 'red';
+        }
+    }
+
+    // Enter в поле личного кода
+    document.getElementById('personalCode').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') checkPersonalAccess();
+    });
+
     // Инициализация
     renderHeaderLinks();
     renderQuestions();
     renderArticles();
+    renderSuperArticles();
 </script>
 
 </body>
