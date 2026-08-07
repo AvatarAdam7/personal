@@ -5,191 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Библиотека статей</title>
     <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #f0f2f5;
-        }
-        .container {
-            background: black;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        h1 { margin-top: 0; color: #1a1a2e; }
-        .header-links {
-            background: #eef2ff;
-            padding: 12px 18px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .header-links a {
-            display: inline-block;
-            margin: 4px 10px 4px 0;
-            color: #4f46e5;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .header-links a:hover { text-decoration: underline; }
-        .quiz-area {
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-        }
-        .question-item {
-            margin-bottom: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .question-item label {
-            font-weight: 600;
-            display: block;
-            margin-bottom: 8px;
-        }
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .options label {
-            font-weight: normal;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-        .options input[type="radio"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-        .hint {
-            font-size: 14px;
-            color: #4b5563;
-            margin: 10px 0 15px 0;
-            background: #f3f4f6;
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
-        button {
-            padding: 12px 30px;
-            font-size: 16px;
-            background: #4f46e5;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        button:hover { background: #4338ca; }
-        .result {
-            margin-top: 15px;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .articles-list {
-            margin-top: 30px;
-            border-top: 2px solid #e5e7eb;
-            padding-top: 20px;
-        }
-        .article-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
-            margin-bottom: 10px;
-            background: #f9fafb;
-            border-radius: 10px;
-            border-left: 4px solid #9ca3af;
-        }
-        .article-item.unlocked {
-            border-left-color: #22c55e;
-            background: #f0fdf4;
-        }
-        .article-title {
-            font-size: 17px;
-            font-weight: 500;
-        }
-        .lock-icon {
-            font-size: 24px;
-            margin-left: 10px;
-        }
-        .article-link {
-            color: #1e293b;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 6px 14px;
-            border-radius: 6px;
-            background: #e2e8f0;
-        }
-        .article-link:hover {
-            background: #cbd5e1;
-        }
-        .unlocked .article-link {
-            background: #22c55e;
-            color: white;
-        }
-        .unlocked .article-link:hover {
-            background: #16a34a;
-        }
-
-        /* ===== Супер-секретный блок ===== */
-        .super-secret {
-            margin-top: 40px;
-            border-top: 3px dashed #7c3aed;
-            padding-top: 25px;
-        }
-        .super-secret h2 {
-            color: #6d28d9;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .super-input-area {
-            background: #f5f3ff;
-            padding: 18px;
-            border-radius: 12px;
-            margin: 15px 0;
-            border: 1px solid #ddd6fe;
-        }
-        .super-input-area input[type="password"],
-        .super-input-area input[type="text"] {
-            width: 100%;
-            padding: 12px 14px;
-            font-size: 16px;
-            border: 1px solid #c4b5fd;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-        .super-input-area button {
-            background: #7c3aed;
-        }
-        .super-input-area button:hover {
-            background: #6d28d9;
-        }
-        .super-articles .article-item {
-            border-left-color: #a78bfa;
-            background: #faf5ff;
-        }
-        .super-articles .article-item.unlocked {
-            border-left-color: #7c3aed;
-            background: #f3e8ff;
-        }
-        .super-articles .unlocked .article-link {
-            background: #7c3aed;
-        }
-        .super-articles .unlocked .article-link:hover {
-            background: #6d28d9;
-        }
-    </style>
-</head>
-<body>
+    * { box-sizing: border-box; }
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #0d1117; /* тёмный фон страницы */
+        color: #e6edf3;      /* основной цвет текста */
+    }
+    .container {
+        background: #161b22;  /* тёмный фон контейнера */
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    h1 { margin-top: 0; color: #f0f6fc; }
+    .header-links {
+        background: #21262d;
+        padding: 12px 18px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    .header-links a {
+        color: #58a6ff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .header-links a:hover { text-decoration: underline; }
+    .quiz-area {
+        background: #0d1117;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+    .question-item {
+        margin-bottom: 20px;
+        background: #21262d;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .question-item label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+        color: #f0f6fc;
+    }
+    .options label {
+        font-weight: normal;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        color: #c9d1d9;
+    }
+    .options input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #58a6ff; /* цвет радиокнопок */
+    }
+    .hint {
+        font-size: 14px;
+        color: #8b949e;
+        margin: 10px 0 15px 0;
+        background: #21262d;
+        padding: 8px 12px;
+        border-radius: 6px;
+    }
+    button {
+        padding: 12px 30px;
+        font-size: 16px;
+        background: #238636;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    button:hover { background: #2ea043; }
+    .result {
+        margin-top: 15px;
+        font-weight: bold;
+        font-size: 18px;
+        color: #f0f6fc;
+    }
+    .articles-list {
+        margin-top: 30px;
+        border-top: 2px solid #30363d;
+        padding-top: 20px;
+    }
+    .article-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        background: #21262d;
+        border-radius: 10px;
+        border-left: 4px solid #30363d;
+        color: #c9d1d9;
+    }
+    .article-item.unlocked {
+        border-left-color: #238636;
+        background: #1c2333;
+    }
+    .article-title {
+        font-size: 17px;
+        font-weight: 500;
+    }
+    .lock-icon {
+        font-size: 24px;
+        margin-left: 10px;
+    }
+    .article-link {
+        color: #c9d1d9;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 6px 14px;
+        border-radius: 6px;
+        background: #30363d;
+    }
+    .article-link:hover {
+        background: #484f58;
+    }
+    .unlocked .article-link {
+        background: #238636;
+        color: white;
+    }
+    .unlocked .article-link:hover {
+        background: #2ea043;
+    }
+</style>
 
 <!--
 ████████████████████████████████████████████████████████████████████████████████
