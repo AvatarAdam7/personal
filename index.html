@@ -3,193 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Библиотека статей</title>
+    <title>Секретная библиотека</title>
     <style>
-    * { box-sizing: border-box; }
-    body {
-        font-family: 'Segoe UI', Arial, sans-serif;
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 20px;
-        background: #0d1117; /* тёмный фон страницы */
-        color: #e6edf3;      /* основной цвет текста */
-    }
-    .container {
-        background: #161b22;  /* тёмный фон контейнера */
-        padding: 30px;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-    h1 { margin-top: 0; color: #f0f6fc; }
-    .header-links {
-        background: #21262d;
-        padding: 12px 18px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-    }
-    .header-links a {
-        color: #58a6ff;
-        text-decoration: none;
-        font-weight: 500;
-    }
-    .header-links a:hover { text-decoration: underline; }
-    .quiz-area {
-        background: #0d1117;
-        padding: 20px;
-        border-radius: 12px;
-        margin: 20px 0;
-    }
-    .question-item {
-        margin-bottom: 20px;
-        background: #21262d;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
-    .question-item label {
-        font-weight: 600;
-        display: block;
-        margin-bottom: 8px;
-        color: #f0f6fc;
-    }
-    .options label {
-        font-weight: normal;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        color: #c9d1d9;
-    }
-    .options input[type="radio"] {
-        width: 18px;
-        height: 18px;
-        cursor: pointer;
-        accent-color: #58a6ff; /* цвет радиокнопок */
-    }
-    .hint {
-        font-size: 14px;
-        color: #8b949e;
-        margin: 10px 0 15px 0;
-        background: #21262d;
-        padding: 8px 12px;
-        border-radius: 6px;
-    }
-    button {
-        padding: 12px 30px;
-        font-size: 16px;
-        background: #238636;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-    }
-    button:hover { background: #2ea043; }
-    .result {
-        margin-top: 15px;
-        font-weight: bold;
-        font-size: 18px;
-        color: #f0f6fc;
-    }
-    .articles-list {
-        margin-top: 30px;
-        border-top: 2px solid #30363d;
-        padding-top: 20px;
-    }
-    .article-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 18px;
-        margin-bottom: 10px;
-        background: #21262d;
-        border-radius: 10px;
-        border-left: 4px solid #30363d;
-        color: #c9d1d9;
-    }
-    .article-item.unlocked {
-        border-left-color: #238636;
-        background: #1c2333;
-    }
-    .article-title {
-        font-size: 17px;
-        font-weight: 500;
-    }
-    .lock-icon {
-        font-size: 24px;
-        margin-left: 10px;
-    }
-    .article-link {
-        color: #c9d1d9;
-        text-decoration: none;
-        font-weight: 500;
-        padding: 6px 14px;
-        border-radius: 6px;
-        background: #30363d;
-    }
-    .article-link:hover {
-        background: #484f58;
-    }
-    .unlocked .article-link {
-        background: #238636;
-        color: white;
-    }
-    .unlocked .article-link:hover {
-        background: #2ea043;
-    }
-</style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            min-height: 100vh;
+            padding: 20px 12px 40px;
+            line-height: 1.5;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: #f0f6fc;
+            margin-bottom: 28px;
+            padding: 0 10px;
+        }
+
+        /* ===== Сетка ===== */
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 900px) {
+            .layout {
+                grid-template-columns: 240px 1fr 260px;
+                align-items: start;
+            }
+        }
+
+        /* ===== Колонки ===== */
+        .column {
+            background: #161b22;
+            border-radius: 14px;
+            padding: 18px;
+            border: 1px solid #30363d;
+        }
+
+        .column h2 {
+            font-size: 1.05rem;
+            color: #f0f6fc;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Левая колонка — открытые */
+        .col-open h2 { color: #3fb950; }
+        .col-open .article-card {
+            background: #21262d;
+            border-left: 4px solid #3fb950;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+        .col-open .article-card a {
+            color: #58a6ff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: block;
+        }
+        .col-open .article-card a:hover { text-decoration: underline; }
+
+        /* Центральная — вопросы */
+        .col-quiz {
+            min-width: 0;
+        }
+        .question-item {
+            background: #21262d;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .question-item > label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 10px;
+            color: #f0f6fc;
+            font-size: 0.95rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .options label {
+            font-weight: normal;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            cursor: pointer;
+            color: #c9d1d9;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .options input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            flex-shrink: 0;
+            accent-color: #58a6ff;
+            cursor: pointer;
+        }
+        .hint {
+            font-size: 13px;
+            color: #8b949e;
+            background: #21262d;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+        .quiz-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-top: 8px;
+        }
+        button {
+            padding: 11px 22px;
+            font-size: 15px;
+            background: #238636;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button:hover { background: #2ea043; }
+        .result {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        /* Правая колонка — закрытые + супер */
+        .col-locked h2 { color: #f85149; }
+        .article-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            background: #21262d;
+            border-radius: 10px;
+            border-left: 4px solid #484f58;
+        }
+        .article-item.unlocked {
+            border-left-color: #238636;
+            background: #1c2333;
+        }
+        .article-title {
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: #c9d1d9;
+            line-height: 1.35;
+        }
+        .article-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .lock-icon { font-size: 18px; }
+        .article-link {
+            color: #c9d1d9;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 5px 12px;
+            border-radius: 6px;
+            background: #30363d;
+            white-space: nowrap;
+        }
+        .article-link:hover { background: #484f58; }
+        .unlocked .article-link {
+            background: #238636;
+            color: white;
+        }
+        .unlocked .article-link:hover { background: #2ea043; }
+        .closed-label {
+            background: #30363d;
+            color: #8b949e;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: default;
+        }
+
+        /* Супер-секретно */
+        .super-block {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 2px dashed #6e40c9;
+        }
+        .super-block h2 {
+            color: #a371f7;
+            border-bottom-color: #6e40c9;
+        }
+        .super-input-area {
+            background: #21262d;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .super-input-area input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 15px;
+            border: 1px solid #6e40c9;
+            border-radius: 8px;
+            background: #0d1117;
+            color: #e6edf3;
+            margin-bottom: 10px;
+        }
+        .super-input-area input:focus {
+            outline: none;
+            border-color: #a371f7;
+            box-shadow: 0 0 0 2px rgba(163, 113, 247, 0.25);
+        }
+        .super-input-area button {
+            background: #6e40c9;
+            width: 100%;
+        }
+        .super-input-area button:hover { background: #8957e5; }
+        .super-block .article-item {
+            border-left-color: #6e40c9;
+        }
+        .super-block .article-item.unlocked {
+            border-left-color: #a371f7;
+            background: #1f1630;
+        }
+        .super-block .unlocked .article-link {
+            background: #6e40c9;
+        }
+        .super-block .unlocked .article-link:hover {
+            background: #8957e5;
+        }
+
+        /* Мобильные улучшения */
+        @media (max-width: 899px) {
+            .column { padding: 16px; }
+            .page-title { margin-bottom: 20px; }
+        }
+
+        /* Скрытие пустых состояний */
+        .empty-note {
+            font-size: 0.85rem;
+            color: #8b949e;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
 
 <!--
 ████████████████████████████████████████████████████████████████████████████████
-██                                                                            ██
 ██   ХИТРОЖОПОСТЬ БЕЗ ЗНАНИЙ НЕ ПОМОЖЕТ В ПЕРЕХОДЕ, ЗАПОМНИ ХАКЕР =))         ██
 ██   Знания необходимы до определённого момента, но потом и их нужно оставить ██
-██   			                                                              ██
-██                                                                            ██
 ████████████████████████████████████████████████████████████████████████████████
 -->
 
-<div class="container">
-    <h1>📚 Доступ к секретной библиотеке</h1>
+<h1 class="page-title">📚 Доступ к секретной библиотеке</h1>
 
-    <!-- Шапка со ссылкой на статью-источник вопросов (всегда открыта) -->
-    <div class="header-links">
-        <p><strong>📖 Вопросы основаны на статье (открыта для всех):</strong></p>
-        <div id="headerLinksContainer"></div>
-    </div>
+<div class="layout">
 
-    <p>Ответьте на все вопросы, чтобы разблокировать статью ниже.</p>
+    <!-- ===== ЛЕВАЯ КОЛОНКА: Открытые статьи ===== -->
+    <aside class="column col-open">
+        <h2>📖 Открытые статьи</h2>
+        <div id="openArticlesContainer"></div>
+    </aside>
 
-    <div class="quiz-area">
+    <!-- ===== ЦЕНТР: Вопросы ===== -->
+    <main class="column col-quiz">
+        <h2>❓ Вопросы</h2>
+        <p style="font-size:0.9rem;color:#8b949e;margin-bottom:14px;">
+            Ответьте на все вопросы, чтобы открыть статьи справа.
+        </p>
         <div id="questionsContainer"></div>
-        <div class="hint">💡 Регистр ответов не важен – можно писать с большой или маленькой буквы.</div>
-        <button onclick="checkAnswers()">🔓 Разблокировать</button>
-        <div id="result" class="result"></div>
-    </div>
-
-    <div class="articles-list">
-        <h2>📄 Заблокированная статья</h2>
-        <div id="articlesContainer"></div>
-    </div>
-
-    <!-- ============================================================
-         ОТДЕЛЬНЫЙ БЛОК: СУПЕР-СЕКРЕТНО
-         Не связан с викториной. Открывается только личным кодом.
-         ============================================================ -->
-    <div class="super-secret">
-        <h2>🔮 Супер-секретно</h2>
-        <p>Доступ только по личному коду.</p>
-
-        <div class="super-input-area">
-            <input type="password" id="personalCode" placeholder="Введите личный код..." autocomplete="off">
-            <button onclick="checkPersonalAccess()">🔑 Открыть</button>
-            <div id="superResult" class="result"></div>
+        <div class="hint">💡 Регистр не важен. Можно выбирать ответы в любом порядке.</div>
+        <div class="quiz-actions">
+            <button onclick="checkAnswers()">🔓 Разблокировать</button>
+            <div id="result" class="result"></div>
         </div>
+    </main>
 
-        <div class="super-articles">
+    <!-- ===== ПРАВАЯ КОЛОНКА: Закрытые + Супер ===== -->
+    <aside class="column col-locked">
+        <h2>🔒 Закрытые статьи</h2>
+        <div id="articlesContainer"></div>
+
+        <div class="super-block">
+            <h2>🔮 Супер-секретно</h2>
+            <p style="font-size:0.85rem;color:#8b949e;margin-bottom:12px;">
+                Только по личному коду
+            </p>
+            <div class="super-input-area">
+                <input type="password" id="personalCode" placeholder="Личный код..." autocomplete="off">
+                <button onclick="checkPersonalAccess()">🔑 Открыть</button>
+                <div id="superResult" class="result" style="margin-top:10px;"></div>
+            </div>
             <div id="superArticlesContainer"></div>
         </div>
-    </div>
+    </aside>
+
 </div>
 
 <script>
@@ -198,13 +326,10 @@
     // =============================================================
     const SALT = "mysalt";
 
-    // Проверочный хеш обычной викторины
     const FINAL_HASH = "18d583a9088be18c5854cd4d8fff749e633c6f9cbb467344befc61f73de75947";
-
-    // Личный хеш для супер-секретного блока
     const PERSONAL_HASH = "10a2a24d126a9f85c7051c0d57c41809a601061d5ed3ed9aa741df86a3492693";
 
-    // СТАТЬЯ-ИСТОЧНИК (всегда открыта, выводится в шапке)
+    // Открытые статьи (слева)
     const sourceArticles = [
         {
             title: "🛸 Люди-батарейки, Архонты и Иисусова молитва",
@@ -212,7 +337,7 @@
         }
     ];
 
-    // ЗАБЛОКИРОВАННЫЕ СТАТЬИ (открываются после викторины)
+    // Закрытые статьи (справа, после викторины)
     const articles = [
         {
             title: "🌉 Сон о переходе: руководство к тому, как не испугаться своей смерти",
@@ -220,77 +345,64 @@
         }
     ];
 
-    // СУПЕР-СЕКРЕТНЫЕ СТАТЬИ (открываются только личным кодом)
+    // Супер-секретные
     const superArticles = [
         {
             title: "🔒 Опыт изменивший мою жизнь",
             encryptedUrl: "WUQVQhIIG0sAVkQXFwtLGgUYUxoDUwNRAwNTVwBaAwxRUABVH39WJ3AwAwotBnhMFWRWZSc+U14NBlZjBndgd1dYDVotBXgeBHVmJEotUgcTBWhWDgYNB3NQL2wA"
         }
-        // Добавляй сюда ещё объекты по тому же принципу
     ];
 
-    // =============================================================
-    //  ВОПРОСЫ (ПЕРЕМЕШАНЫ)
-    // =============================================================
+    // Вопросы (варианты уже перемешаны)
     const questions = [
         {
             id: "q1",
             text: "Кто в гностицизме создал материальный мир?",
-            type: "choice",
             options: ["Истинный Бог", "Христос", "Демиург", "Архонты"]
         },
         {
             id: "q2",
             text: "Кто такие Архонты в гностической модели?",
-            type: "choice",
             options: ["Слуги Истинного Бога", "Слуги Демиурга", "Посланники Христа", "Ангелы-хранители"]
         },
         {
             id: "q3",
             text: "Что такое душа человека в гностицизме?",
-            type: "choice",
             options: ["Искра Божественного света", "Материальная оболочка", "Часть Демиурга", "Творение архонтов"]
         },
         {
             id: "q4",
             text: "Что такое «ловушка света» согласно гностическому учению?",
-            type: "choice",
             options: ["Путь к Истинному Богу", "Испытание души", "Награда праведников", "Обманный путь к перевоплощению"]
         },
         {
             id: "q5",
             text: "Как Христос помогает в гностической картине мира?",
-            type: "choice",
             options: ["Создаёт материальный мир", "Уничтожает Демиурга", "Показывает путь обхода ловушек архонтов", "Дарует богатство"]
         },
         {
             id: "q6",
             text: "Что, согласно апостолу Павлу, представляют собой архонты?",
-            type: "choice",
             options: ["Слуги сатаны", "Творцы материального мира", "Авторы Ветхого Завета", "Добрые ангелы"]
         },
         {
             id: "q7",
             text: "Согласно святым отцам, почему при Иисусовой молитве возникают скорби?",
-            type: "choice",
             options: ["Бог наказывает молящегося", "Бесы мстят человеку", "Молитва неправильная", "Человек слишком грешен"]
         },
         {
             id: "q8",
             text: "Каковы характеристики Истинного Света согласно «Тибетской книге мёртвых»?",
-            type: "choice",
             options: ["Манит любовью и покоем", "Обещает счастье", "Убаюкивает", "Вызывает страх и трепет"]
         },
         {
             id: "q9",
             text: "Каковы характеристики Ложного Света?",
-            type: "choice",
             options: ["Пугает, размывает сознание", "Манит обещанием счастья", "Заставляет отказаться от «я»", "Не даёт никаких ощущений"]
         },
         {
             id: "q11",
             text: "Почему мы обращаемся к Христу как к Господу, согласно данному отрывку?",
-            type: "choice",
             options: [
                 "Потому что Христос — это отдельная личность, равная Отцу",
                 "Потому что Христос — это только человек, великий учитель",
@@ -303,7 +415,6 @@
     // =============================================================
     //  КОД
     // =============================================================
-
     let unlocked = false;
     let superUnlocked = false;
     let decryptedUrls = {};
@@ -322,15 +433,18 @@
         }
     }
 
-    function renderHeaderLinks() {
-        const container = document.getElementById('headerLinksContainer');
+    function renderOpenArticles() {
+        const container = document.getElementById('openArticlesContainer');
         container.innerHTML = '';
-        sourceArticles.forEach((article) => {
-            const a = document.createElement('a');
-            a.href = article.url;
-            a.target = '_blank';
-            a.textContent = '🔗 ' + article.title;
-            container.appendChild(a);
+        if (sourceArticles.length === 0) {
+            container.innerHTML = '<p class="empty-note">Пока нет открытых статей</p>';
+            return;
+        }
+        sourceArticles.forEach(article => {
+            const div = document.createElement('div');
+            div.className = 'article-card';
+            div.innerHTML = `<a href="${article.url}" target="_blank" rel="noopener">${article.title}</a>`;
+            container.appendChild(div);
         });
     }
 
@@ -340,12 +454,10 @@
         questions.forEach((q, index) => {
             const div = document.createElement('div');
             div.className = 'question-item';
-            let inputHtml = `<div class="options">`;
-            q.options.forEach((opt) => {
-                inputHtml += `<label><input type="radio" name="${q.id}" value="${opt}"> ${opt}</label>`;
-            });
-            inputHtml += `</div>`;
-            div.innerHTML = `<label>${index + 1}. ${q.text}</label>${inputHtml}`;
+            let opts = q.options.map(opt =>
+                `<label><input type="radio" name="${q.id}" value="${opt}"> ${opt}</label>`
+            ).join('');
+            div.innerHTML = `<label>${index + 1}. ${q.text}</label><div class="options">${opts}</div>`;
             container.appendChild(div);
         });
     }
@@ -358,12 +470,14 @@
             div.className = 'article-item' + (unlocked ? ' unlocked' : '');
             const url = unlocked ? (decryptedUrls[idx] || '#') : null;
             div.innerHTML = `
-                <span class="article-title">${article.title}</span>
-                <span class="lock-icon">${unlocked ? '🔓' : '🔒'}</span>
-                ${unlocked && url
-                    ? `<a href="${url}" class="article-link" target="_blank">Читать →</a>`
-                    : `<span class="article-link" style="background:#e5e7eb;color:#9ca3af;cursor:default;">Закрыто</span>`
-                }
+                <div class="article-title">${article.title}</div>
+                <div class="article-meta">
+                    <span class="lock-icon">${unlocked ? '🔓' : '🔒'}</span>
+                    ${unlocked && url
+                        ? `<a href="${url}" class="article-link" target="_blank" rel="noopener">Читать →</a>`
+                        : `<span class="closed-label">Закрыто</span>`
+                    }
+                </div>
             `;
             container.appendChild(div);
         });
@@ -377,12 +491,14 @@
             div.className = 'article-item' + (superUnlocked ? ' unlocked' : '');
             const url = superUnlocked ? (superDecryptedUrls[idx] || '#') : null;
             div.innerHTML = `
-                <span class="article-title">${article.title}</span>
-                <span class="lock-icon">${superUnlocked ? '🔓' : '🔒'}</span>
-                ${superUnlocked && url
-                    ? `<a href="${url}" class="article-link" target="_blank">Читать →</a>`
-                    : `<span class="article-link" style="background:#e5e7eb;color:#9ca3af;cursor:default;">Закрыто</span>`
-                }
+                <div class="article-title">${article.title}</div>
+                <div class="article-meta">
+                    <span class="lock-icon">${superUnlocked ? '🔓' : '🔒'}</span>
+                    ${superUnlocked && url
+                        ? `<a href="${url}" class="article-link" target="_blank" rel="noopener">Читать →</a>`
+                        : `<span class="closed-label">Закрыто</span>`
+                    }
+                </div>
             `;
             container.appendChild(div);
         });
@@ -390,28 +506,23 @@
 
     async function checkAnswers() {
         if (unlocked) {
-            document.getElementById('result').innerHTML = '✅ Доступ уже открыт.';
-            document.getElementById('result').style.color = 'green';
+            document.getElementById('result').innerHTML = '✅ Уже открыто';
+            document.getElementById('result').style.color = '#3fb950';
             return;
         }
 
         const selectedAnswers = [];
         let allAnswered = true;
-
         for (let q of questions) {
             const selected = document.querySelector(`input[name="${q.id}"]:checked`);
-            if (!selected) {
-                allAnswered = false;
-                break;
-            }
+            if (!selected) { allAnswered = false; break; }
             selectedAnswers.push(selected.value);
         }
 
         const resultDiv = document.getElementById('result');
-
         if (!allAnswered) {
-            resultDiv.innerHTML = '❌ Ответьте на все вопросы.';
-            resultDiv.style.color = 'red';
+            resultDiv.innerHTML = '❌ Ответьте на все вопросы';
+            resultDiv.style.color = '#f85149';
             return;
         }
 
@@ -426,31 +537,28 @@
                 const url = xorDecrypt(article.encryptedUrl, FINAL_HASH);
                 if (url) decryptedUrls[idx] = url;
             });
-
             unlocked = true;
-            resultDiv.innerHTML = '✅ Все верно! Статьи разблокированы.';
-            resultDiv.style.color = 'green';
+            resultDiv.innerHTML = '✅ Статьи открыты!';
+            resultDiv.style.color = '#3fb950';
             renderArticles();
         } else {
-            resultDiv.innerHTML = '❌ Не все ответы правильные. Попробуйте ещё раз.';
-            resultDiv.style.color = 'red';
+            resultDiv.innerHTML = '❌ Есть ошибки';
+            resultDiv.style.color = '#f85149';
         }
     }
 
-    // ===== Супер-секретный доступ =====
     async function checkPersonalAccess() {
         if (superUnlocked) {
-            document.getElementById('superResult').innerHTML = '✅ Супер-доступ уже открыт.';
-            document.getElementById('superResult').style.color = 'green';
+            document.getElementById('superResult').innerHTML = '✅ Уже открыто';
+            document.getElementById('superResult').style.color = '#a371f7';
             return;
         }
 
         const code = document.getElementById('personalCode').value.trim();
         const resultDiv = document.getElementById('superResult');
-
         if (!code) {
-            resultDiv.innerHTML = '❌ Введите код.';
-            resultDiv.style.color = 'red';
+            resultDiv.innerHTML = '❌ Введите код';
+            resultDiv.style.color = '#f85149';
             return;
         }
 
@@ -464,28 +572,26 @@
                 const url = xorDecrypt(article.encryptedUrl, PERSONAL_HASH);
                 if (url) superDecryptedUrls[idx] = url;
             });
-
             superUnlocked = true;
-            resultDiv.innerHTML = '✅ Супер-доступ открыт.';
-            resultDiv.style.color = 'green';
+            resultDiv.innerHTML = '✅ Доступ открыт';
+            resultDiv.style.color = '#a371f7';
             renderSuperArticles();
         } else {
-            resultDiv.innerHTML = '❌ Неверный код.';
-            resultDiv.style.color = 'red';
+            resultDiv.innerHTML = '❌ Неверный код';
+            resultDiv.style.color = '#f85149';
         }
     }
 
-    // Enter в поле личного кода
     document.getElementById('personalCode').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') checkPersonalAccess();
     });
 
     // Инициализация
-    renderHeaderLinks();
+    renderOpenArticles();
     renderQuestions();
     renderArticles();
     renderSuperArticles();
 </script>
-
 </body>
 </html>
+
